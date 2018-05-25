@@ -8,7 +8,7 @@ const resposeObject = require('../libs/response');
 global.fetch = require('node-fetch')
 
 class CognitoHelper {
-    
+    console.log('123');
     }
     
 }
