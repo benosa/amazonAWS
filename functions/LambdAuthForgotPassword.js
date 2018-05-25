@@ -9,6 +9,7 @@ global.fetch = require('node-fetch')
 
 class CognitoHelper {
     constructor() {
+		console.log('124');
         this.poolData = { "UserPoolId": config.UserPoolId, "ClientId":config.ClientId };
         this.userPool = new ACI.CognitoUserPool(this.poolData);
     }
