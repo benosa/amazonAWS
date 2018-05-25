@@ -1,0 +1,19 @@
+{
+    "AWS_ACCOUNT_ID": "927797028287",
+    "CLI_PROFILE": "default",
+    "REGION": "us-west-1",
+    "BUCKET": "loginservicebucket",
+    "MAX_AGE": "10",
+    "CRYPTO_BYTE_SIZE": 128,
+    "DDB_TABLE": "LambdAuthUsers",
+    "IDENTITY_POOL_NAME": "stockpool2",
+    "DEVELOPER_PROVIDER_NAME": "login.mycompany.myapp",
+    "EXTERNAL_NAME": "My Authentication",
+    "EMAIL_SOURCE": "email@example.com",
+    "VERIFICATION_PAGE": "http://bucket.s3.amazonaws.com/verify.html",
+    "RESET_PAGE": "http://bucket.s3.amazonaws.com/reset.html",
+    "UserPoolId" : "eu-west-1_aSOLu76Wz",
+    "ClientId" : "5btiok3r90grjtf8ms4paeddnq",
+    "iss": "https://cognito-idp.eu-west-1.amazonaws.com/eu-west-1_aSOLu76Wz",
+    "IdentityPoolId" : "eu-west-1:f335e2a3-89c8-4473-9d6b-097e212eaa21"
+  }

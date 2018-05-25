@@ -1,0 +1,114 @@
+service:
+  name: LoginService
+
+# Add the serverless-webpack plugin
+plugins:
+  #- serverless-webpack
+  - serverless-pseudo-parameters
+  - serverless-sam
+  - serverless-iam-roles-per-function
+  #- serverless-domain-manager
+
+
+custom: 
+  stage: ${opt:stage, self:provider.stage}
+  logLevel:
+    prod: WARN
+    default: DEBUG
+  serverless-iam-roles-per-function:
+    defaultInherit: true
+  customDomain:
+    domainName: dev3.xxpirates.com
+    certificateName: xxpirates.com
+    basePath: ''
+    stage: ${self:provider.stage}
+    createRoute53Record: true
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  environment:
+    DYNAMODB_TABLE: ${self:service}-${opt:stage, self:custom.stage}
+    log_level: ${self:custom.logLevel.${self:custom.stage}, self:custom.logLevel.default}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - cloudwatch:PutMetricData
+      Resource: '*'
+#     Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+
+functions:
+  LambdAuthLogin:
+    handler: functions/LambdAuthLogin.handler
+    events:
+      - http:
+          method: post
+          path: login
+          cors: true
+          allowCredentials: true
+    enviroment:
+      login_api: https://zt88ws56yi.execute-api.us-east-1.amazonaws.com/dev/login
+      cognito_user_pool_id: eu-west-1_aSOLu76Wz
+      cognito_client_id: 5btiok3r90grjtf8ms4paeddnq
+    timeout: 180
+  LambdAuthChangePassword:
+    handler: functions/LambdAuthChangePassword.handler
+    events:
+      - http:
+          method: post
+          path: changePassword
+  LambdAuthCreateUser:
+    handler: functions/LambdAuthCreateUser.handler
+    events:
+      - http:
+          method: post
+          path: createUser
+  LambdAuthLostPassword:
+    handler: functions/LambdAuthLostPassword.handler
+    events:
+      - http:
+          method: post
+          path: lostPassword
+  LambdAuthResetPassword:
+    handler: functions/LambdAuthResetPassword.handler
+    events:
+      - http:
+          method: post
+          path: resetPassword
+  LambdAuthVerifyUser:
+    handler: functions/LambdAuthVerifyUser.handler
+    events:
+      - http:
+          method: post
+          path: verifyUser
+  LambdAuthAuthorize:
+    handler: functions/LambdAuthAuthorizer.handler
+    events:
+      - http:
+          method: post
+          path: verifyUser
+resources:
+  Resources:
+    TodosDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      #DeletionPolicy: Retain
+      DeletionPolicy: Delete
+      Properties:
+        AttributeDefinitions:
+          -
+            AttributeName: email
+            AttributeType: S
+        KeySchema:
+          -
+            AttributeName: email
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 10
+          WriteCapacityUnits: 10
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
